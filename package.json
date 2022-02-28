@@ -1,0 +1,66 @@
+{
+  "name": "@websublime/forms",
+  "version": "0.0.1",
+  "source": "./src",
+  "main": "./dist/forms.umd.js",
+  "module": "./dist/forms.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/forms.es.js",
+      "require": "./dist/forms.umd.js"
+    }
+  },
+  "types": "./dist/@types/index.d.ts",
+  "files": [
+    "dist/",
+    "./LICENSE.md",
+    "./README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js && yarn types",
+    "types": "tsc --emitDeclarationOnly",
+    "test": "jest --verbose -i",
+    "release": "yarn changeset publish"
+  },
+  "dependencies": {
+    "@websublime/schema": "^1.0.2"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.3.0",
+    "@changesets/cli": "^2.14.1",
+    "@changesets/get-github-info": "^0.5.0",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.11.12",
+    "esbuild": "^0.14.23",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.1",
+    "typescript": "^4.5.2"
+  },
+  "bugs": {
+    "url": "https://github.com/websublime/forms/issues"
+  },
+  "description": "Forms model",
+  "keywords": [
+    "typescript",
+    "validation",
+    "schema",
+    "lib"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/websublime/forms"
+  },
+  "author": {
+    "email": "huzgo1@gmail.com",
+    "name": "Hugo Lago",
+    "url": "https://github.com/Hulago"
+  },
+  "contributors": [
+    {
+      "email": "miguel.marques.ramos@gmail.com",
+      "name": "Miguel Ramos",
+      "url": "https://miguelramos.dev"
+    }
+  ]
+}
