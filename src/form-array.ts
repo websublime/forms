@@ -1,9 +1,9 @@
-import {
+import type {
   ArraySchemaType,
   BaseSchemaType,
-  ObjectSchemaType,
-  schemaType
+  ObjectSchemaType
 } from '@websublime/schema';
+import { schemaType } from '@websublime/schema';
 import { BaseControl } from './base-control';
 import { FormControl } from './form-control';
 import { FormGroup } from './form-group';
@@ -27,10 +27,10 @@ export class FormArray<T = any> extends BaseControl<T> {
     super(schema, parent, context);
   }
 
-  async validate(data: any = this.data, drill = false) {
+  async validate(data: any = this.weakMap.get(this), drill = false) {
     const { errors, isValid } = await this.schema.check(
       data,
-      this.parent?.data,
+      this.parent?.weakMap.get(this.parent),
       null,
       drill
     );
@@ -55,7 +55,8 @@ export class FormArray<T = any> extends BaseControl<T> {
   }
 
   setData(data: any) {
-    this.data = data;
+    this.weakMap.set(this, data);
+
     data.forEach((item: any, index: number) => {
       if (this.items[index]) {
         this.items[index].setData(item);
@@ -104,13 +105,13 @@ export class FormArray<T = any> extends BaseControl<T> {
 
     if (
       (child.context !== null || child.context !== undefined) &&
-      (this.data !== null || this.data !== undefined) &&
-      JSON.stringify((this.data as any)[child.context]) !==
-        JSON.stringify(child.data)
+      (this.weakMap.get(this) !== null || this.weakMap.get(this) !== undefined) &&
+      JSON.stringify((this.weakMap.get(this) as any)[child.context]) !==
+        JSON.stringify(child.weakMap.get(child))
     ) {
-      (this.data as any)[child.context] = child.data;
+      (this.weakMap.get(this) as any)[child.context] = child.weakMap.get(child);
     }
 
-    await this.validate(this.data);
+    await this.validate(this.weakMap.get(this));
   }
 }

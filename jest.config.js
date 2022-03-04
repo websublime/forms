@@ -14,7 +14,8 @@ module.exports = {
       // babelConfig: true,
       diagnostics: false,
       isolatedModules: true,
-      tsconfig: "<rootDir>/tsconfig.test.json"
+      tsconfig: "<rootDir>/tsconfig.test.json",
+      useESM: true
     }
   },
   moduleDirectories: ["node_modules"],
@@ -36,5 +37,6 @@ module.exports = {
     "dist",
     "temp"
   ],
-  verbose: false
+  verbose: false,
+  extensionsToTreatAsEsm: [".ts"]
 };

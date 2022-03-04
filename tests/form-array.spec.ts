@@ -4,11 +4,11 @@ import { FormArray } from '../src/index';
 
 import {
   ArrayType,
-  errorMessages,
   NumberType,
   ObjectType,
   StringType
 } from '@websublime/schema';
+import { errorMessages } from '@websublime/schema';
 
 describe('> FormArray', () => {
   it('Should have default state', () => {
@@ -23,6 +23,7 @@ describe('> FormArray', () => {
         name: StringType().isRequired()
       })
     );
+
     const control = new FormArray(schema);
 
     expect(control.isFocus).toBeFalsy();
