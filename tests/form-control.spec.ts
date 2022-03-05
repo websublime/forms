@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { FormControl } from '../src/index';
 
-import { errorMessages, NumberType } from '@websublime/schema';
+import { errorMessages, NumberType, ObjectType } from '@websublime/schema';
 
 describe('> FormControl', () => {
   it('Should have default state', () => {
@@ -125,5 +125,15 @@ describe('> FormControl', () => {
     expect(control.hasErrors).toBeTruthy();
 
     expect(control.errors[0].i18n).toEqual(errorMessages.number.type);
+  });
+
+  it('Should throw an schema error', async () => {
+    const schema = ObjectType().isRequired();
+
+    try {
+      const control = new FormControl(schema as any);
+    } catch (e) {
+      expect(e).toBe('Invalid Schema type');
+    }
   });
 });
