@@ -102,37 +102,33 @@ export class BaseControl<T = any> {
     const { type } = this.schema;
     const isDataValid = data !== null && data !== undefined && data !== '';
 
-    switch(type) {
+    switch (type) {
       case DATA_TYPES.NUMBER:
-        if(isDataValid) {
-          this.weakMap.set(this, Number(data));
-        }
-
+        this.weakMap.set(this, isDataValid ? Number(data) : data);
         break;
+
       case DATA_TYPES.STRING:
-        if(isDataValid) {
-          this.weakMap.set(this, String(data));
-        }
-
+        this.weakMap.set(this, isDataValid ? String(data) : data);
         break;
+
       case DATA_TYPES.BOOLEAN:
-        if(isDataValid) {
-          this.weakMap.set(this, Boolean(data));
-        }
-
+        this.weakMap.set(this, isDataValid ? Boolean(data) : data);
         break;
+
       case DATA_TYPES.DATE:
-        if(isDataValid) {
-          this.weakMap.set(this, new Date(data));
-        }
-
+        this.weakMap.set(this, isDataValid ? new Date(data) : data);
         break;
+
       case DATA_TYPES.ARRAY || DATA_TYPES.OBJECT:
         this.weakMap.set(this, data);
         break;
       default:
         break;
     }
+  }
+
+  async validateAll(data: any = this.weakMap.get(this)) {
+    return this.validate(data, true);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

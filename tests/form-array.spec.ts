@@ -195,4 +195,31 @@ describe('> FormArray', () => {
       errorMessages.number.min
     );
   });
+
+  it('Should validate nested array', async () => {
+    const schema = ArrayType(ArrayType(StringType().isRequired()));
+
+    const control = new FormArray(schema);
+
+    const arrayData = [
+      ['A', 'B', 'C'],
+      ['a', 'b', 'c']
+    ];
+
+    control.setData(arrayData);
+
+    await control.validateAll();
+
+    expect(control.isValid).toBeTruthy();
+    expect(control.hasErrors).toBeFalsy();
+
+    const item0_1 = control.items[0].items[1];
+    item0_1.setDirty();
+    item0_1.setData(null);
+    await item0_1.validate();
+
+    expect(control.isValid).toBeFalsy();
+    expect(item0_1.hasErrors).toBeTruthy();
+    expect(item0_1.errors[0].i18n).toBe(errorMessages.base.isRequired);
+  });
 });
