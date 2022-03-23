@@ -1,6 +1,6 @@
 {
   "name": "@websublime/forms",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "source": "./src",
   "main": "./dist/forms.cjs.js",
   "module": "./dist/forms.esm.js",
@@ -19,7 +19,7 @@
     "debug": "node --inspect-brk $(npm bin)/jest --no-cache --runInBand"
   },
   "dependencies": {
-    "@websublime/schema": "^1.0.2"
+    "@websublime/schema": "^1.1.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.3.0",

@@ -1010,9 +1010,9 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@websublime/schema@^1.0.2":
+"@websublime/schema@^1.1.0":
   version "1.1.0"
-  resolved "https://registry.npmjs.org/@websublime/schema/-/schema-1.1.0.tgz#96534550fd0b39a6d6b73ed454f8510975cf62c1"
+  resolved "https://registry.yarnpkg.com/@websublime/schema/-/schema-1.1.0.tgz#96534550fd0b39a6d6b73ed454f8510975cf62c1"
   integrity sha512-7F/A4max0gborNe/jd0N8mIYcOGEyn537R/CSNIh0XAbIIEhjzqEMKdQQguClcXi/YEuWCUIY3xrZxU9jR4+/Q==
 
 abab@^2.0.3, abab@^2.0.5:

@@ -1,4 +1,4 @@
-export * from './base-control';
-export * from './form-array';
-export * from './form-control';
-export * from './form-group';
+export { BaseControl } from './base-control';
+export { FormArray } from './form-array';
+export { FormControl } from './form-control';
+export { FormGroup } from './form-group';
