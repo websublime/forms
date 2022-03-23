@@ -1,25 +1,21 @@
-// /**
-//  * Copyright Prozis All Rights Reserved.
-//  */
-// import { FormControl } from './form-control';
 // import { Component, Prop, Vue } from 'vue-property-decorator';
 
 // /**
-//  * PkFormControl
+//  * FormControl
 //  *
 //  * Component providers to use on field forms controls
 //  *
 //  * @example
 //  * ```html
-//  * <pk-form-control :form-control="fg.name" >
-//  *  <pk-input v-model="model.name" #default={ on , errors} :errors="errors" v-on="on" />
-//  * </pk-form-control>
+//  * <form-control :form-control="fg.name" >
+//  *  <input v-model="model.name" #default={ on , errors} :errors="errors" v-on="on" />
+//  * </form-control>
 //  * ```
 //  */
 // @Component({
-//   name: 'PkFormControl'
+//   name: 'FormControl'
 // })
-// export default class PkFormControlComponent extends Vue {
+// export default class FormControlComponent extends Vue {
 //   /**
 //    * FormControl bind.
 //    */
