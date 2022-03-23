@@ -1,6 +1,6 @@
 {
   "name": "@websublime/forms",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "source": "./src",
   "main": "./dist/forms.cjs.js",
   "module": "./dist/forms.esm.js",
