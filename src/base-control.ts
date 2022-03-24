@@ -135,7 +135,8 @@ export class BaseControl<T = any> {
   async validate(data: any = this.weakMap.get(this), drill = false) {
     const { errors, isValid } = await this.schema.check(
       data,
-      this.parent?.weakMap.get(this.parent)
+      this.parent?.weakMap.get(this.parent),
+      this.context
     );
 
     this.isValid = isValid;

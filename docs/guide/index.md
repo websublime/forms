@@ -1,10 +1,14 @@
 # What is Forms?
 
-`@websublime/forms` package sue `@websublime/schema` and form validation model based on `angular` forms model, to make form validation easy.
+`@websublime/forms` package is a form validation model and rely on `@websublime/schema` package to make validations.
+
+`@websublime/forms` package is based on `angular` forms model, to make form validation easy.
+
+`@websublime/forms` package is framework agnostic.
 
 ## Motivation
 
-Forms was created to take advantage of a schema validation and apply to form validation.
+Forms was created to take advantage of a schema validation `@websublime/schema` and apply to form validation.
 
 Is based on `angular` forms model, taking laverage of schema validation and yet very complete.
 
@@ -26,6 +30,8 @@ To create a form we use three concepts:
 - Validation Schema - A schema object with validation rules, that describes the `Model`.
 
 - Forms Model - A forms model based on the `Validation Schema`.
+
+- Provider component - A component to trigger form control validation.
 
 ### Model
 
@@ -77,3 +83,19 @@ control.setData(
 
 await control.validate();
 ```
+
+### Provider Component
+
+```html
+<form-control :form-control="fg.name">
+  <v-text-field
+    v-model="user.name"
+    #default="{ on , errors}"
+    :error-messages="errors"
+    v-on="on"
+  />
+</form-control>
+```
+
+::: info Note
+Example in VueJs wrapping the form control provider component with a `v-text-field` from a popular ui framework `vuetifyjs`
