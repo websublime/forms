@@ -1,139 +1,113 @@
-# Array schema type
+# Form Array
 
-Schema package have a Array schema type, to validate array data structures.
+`FormArray` is used to map arrays in an object model.
 
-Arrays have items and items can be of any type, including `ObjectType` and `ArrayType`.
+We can say a `FormArray` is a list of UI forms or UI form controls.
 
-## ArrayType
+## Validation
 
-The code below creates a validation schema for an array of items of numbers.
+The follwing code create a validation schema for a array of numbers.
+
+The schema:
 
 ```typescript
-const schema = ArrayType<string>()
-  .minLength(2, 'Custom message min length')
-  .of(StringType().isEmail());
+const schema = ArrayType(
+  NumberType()
+    .isRequired()
+    .min(2)
+);
+```
 
-const validation = await schema.check([
-  'mick.branches@websublime.com',
-  'hulake@websublime.com'
+Then we can create a `FormArray` for this validation schema.
+
+```typescript
+const fa = new FormArray(schema);
+```
+
+Validate a element from the list.
+
+```typescript
+fa.setData([1, 2, 3, null]);
+
+await fa.items[3].validate(); // validate bottom up.
+
+expect(fa.isValid).toBeFalsy();
+expect(fa.errors.length).toBe(0);
+
+expect(fa.items[0].isValid).toBeTruthy(); // still valid
+expect(fa.items[1].isValid).toBeTruthy(); // still valid
+expect(fa.items[2].isValid).toBeTruthy(); // still valid
+expect(fa.items[3].isValid).toBeFalsy();
+```
+
+:::info Note
+The code `fa.items[3].validate()` only validates the fourth item of the array an propagate the validation to the top.
+:::
+
+Validate all elements of the array
+
+```typescript
+await fa.validateAll();
+
+expect(fa.isValid).toBeFalsy();
+
+expect(fa.items[0].isValid).toBeFalsy();
+console.log(fa.items[0].errors[0].i18n); // ERRORS.NUMBER.MIN
+
+expect(fa.items[1].isValid).toBeTruthy();
+expect(fa.items[2].isValid).toBeTruthy();
+
+expect(fa.items[3].isValid).toBeFalsy();
+console.log(fa.items[3].errors[0]);
+
+// {
+//   key: 3,
+//   i18n: 'ERRORS.IS_REQUIRED',
+//   constraints: null,
+//   value: null
+// }
+
+expect(fa.errors.length).toBe(0);
+```
+
+## FormArray of FormGroups
+
+Example of an FormArray with FormGroup.
+
+```typescript
+const schema = ArrayType(
+  ObjectType({
+    email: StringType().isEmail(),
+    age: NumberType().min(18)
+  })
+).minLength(3);
+
+const fa = new FormArray(schema);
+
+fa.setData([
+  { email: 'test', age: 10 },
+  { email: 'test@test.com', age: null }
 ]);
 
-expect(validation.hasError).toBeFalsy();
+await fa.validateAll();
 
-const [validationItem1, validationItem2] = validation.items || [];
+expect(fa.isValid).toBeFalsy();
 
-expect(validationItem1.hasError).toBeFalsy();
-expect(validationItem2.hasError).toBeFalsy();
-```
+const [fgItem1, fgItem2] = fa.items;
 
-Example of an invalid model.
+expect(fgItem1.isValid).toBeFalsy();
+expect(fgItem1.properties.email.isValid).toBeFalsy();
 
-```typescript
-// ...
-const schema = ArrayType<string>()
-  .minLength(2, 'Custom message min length')
-  .of(StringType().isEmail());
+console.log(fgItem1.properties.email.errors);
 
-const validation = await schema.check(['hulake-websublime.com']);
+// [
+//   {
+//     key: 'email',
+//     i18n: 'ERRORS.STRING.IS_EMAIL',
+//     constraints: null,
+//     value: 'test'
+//   }
+// ]
 
-expect(validation.hasError).toBeTruthy();
-
-expect(validation.errors[0].i18n).toBe('Custom message min length');
-expect(validation.errors[0].key).toBe(0);
-
-const [validationItem1] = validation.items || [];
-
-expect(validationItem1.hasError).toBeTruthy();
-expect(validationItem1.errors[0].key).toBe(0); // context position for the array
-
-console.log(validationItem1.errors[0].i18n); // ERRORS.STRING.IS_EMAIL
-```
-
-## Array with objects.
-
-Example of array with object items.
-
-```typescript
-const schema = ArrayType<{ age: number; name: string }>()
-  .minLength(2)
-  .of(
-    ObjectType<{ age: number; name: string }>({
-      age: NumberType()
-        .isInteger()
-        .min(10),
-      name: StringType().isRequired()
-    })
-  );
-
-const validation = await schema.check([
-  { age: 2, name: 'Mick Branches' },
-  { age: 11, name: null }
-]);
-
-expect(validation.hasError).toBeFalsy();
-expect(validation.isValid).toBeFalsy();
-
-console.log(JSON.stringify(validation, null, 2));
-```
-
-JSON ouput of the validation object:
-
-```JSON
-{
-  "errors": [],
-  "hasError": false,
-  "isValid": false,
-  "items": [
-    {
-      "errors": [],
-      "hasError": false,
-      "isValid": false,
-      "properties": {
-        "age": {
-          "errors": [
-            {
-              "key": "age",
-              "constraints": {
-                "min": 10
-              },
-              "value": 2,
-              "i18n": "ERRORS.NUMBER.MIN"
-            }
-          ],
-          "hasError": true,
-          "isValid": false
-        },
-        "name": {
-          "errors": [],
-          "hasError": false,
-          "isValid": true
-        }
-      }
-    },
-    {
-      "errors": [],
-      "hasError": false,
-      "isValid": false,
-      "properties": {
-        "age": {
-          "errors": [],
-          "hasError": false,
-          "isValid": true
-        },
-        "name": {
-          "errors": [
-            {
-              "key": "name",
-              "constraints": null,
-              "value": null,
-              "i18n": "ERRORS.IS_REQUIRED"
-            }
-          ],
-          "hasError": true,
-          "isValid": false
-        }
-      }
-    }
-  ]
-}
+expect(fgItem2.isValid).toBeTruthy();
 ```

@@ -5,16 +5,27 @@ export default defineConfig({
   description: 'Form model validation',
   themeConfig: {
     nav: [
-      { text: 'Github', link: 'https://github.com/websublime/forms' },
-      { text: 'Getting Started', link: '/guide/getting-started' }
+      { text: 'Getting Started', link: '/guide/getting-started' },
+      { text: 'API', link: '/api/' },
+      { text: 'Github', link: 'https://github.com/websublime/forms' }
     ],
     sidebar: {
-      '/guide/': getGuideSidebar()
+      '/guide/': getGuideSidebar(),
+      '/api/': getApiSidebar()
       // '/concepts/': getConceptsSidebar(),
       // '/': getGuideSidebar()
     }
   }
 });
+
+function getApiSidebar() {
+  return [
+    {
+      text: 'Home',
+      children: [{ text: 'Forms', link: '/api/forms' }]
+    }
+  ];
+}
 
 function getGuideSidebar() {
   return [

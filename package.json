@@ -1,6 +1,6 @@
 {
   "name": "@websublime/forms",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "source": "./src",
   "main": "./dist/forms.cjs.js",
   "module": "./dist/forms.esm.js",
@@ -14,7 +14,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
-    "docs": "api-documenter markdown --input-folder dist --output-folder dist/docs",
+    "docs": "api-documenter markdown --input-folder dist --output-folder docs/api",
     "build": "yarn types && node scripts/build.js && yarn docs",
     "types": "tsc --emitDeclarationOnly",
     "test": "jest --verbose -i",

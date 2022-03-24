@@ -1,224 +1,243 @@
-# Object schema type
+# Form Group
 
-Schema package have a Object schema type, to validate object structures.
+`FormGroup` is used to map objects in an object model.
 
-Object have properties, and properties can be of any type, including `ObjectType`.
+Most of the UI forms have several input components. Each input component is linked to a `FormControl` and grouped into a `FormGroup`.
 
-## ObjectType
+We can say a `FormGroup` is linked to an UI form.
 
-The code below creates a validation schema for a `User` class object.
+## Validation
+
+The follwing code create a validation schema for a object with three properties.
+
+The model:
 
 ```typescript
 class User {
-  name: string;
   age: number;
   email: string;
+  name: string;
 
   constructor(data?: Partial<User>) {
-    Object.assign(this, data);
+    object.assign(this, data);
   }
 }
-
-const schema = ObjectType<User>({
-  name: StringType().isRequired(),
-  age: NumberType().min(18),
-  email: StringType().isEmail()
-});
-
-let validation = await schema.check(
-  new User({
-    name: 'Sublime',
-    age: 19,
-    email: 'schema@websublime.com'
-  })
-);
-
-expect(validation.isValid).toBeTruthy();
-expect(validation.hasError).toBeFalsy();
-
-expect(validation.properties.age.hasError).toBeFalsy();
-expect(validation.properties.age.isValid).toBeTruthy();
-
-expect(validation.properties.email.hasError).toBeFalsy();
-expect(validation.properties.email.isValid).toBeTruthy();
 ```
 
-Example of an invalid model.
+The schema:
 
 ```typescript
-class User {
-  name: string;
-  age: number;
-  email: string;
-
-  constructor(data?: Partial<User>) {
-    Object.assign(this, data);
-  }
-}
-
 const schema = ObjectType<User>({
-  name: StringType().isRequired(),
-  age: NumberType().min(18),
-  email: StringType().isEmail()
+  age: NumberType()
+    .isRequired()
+    .min(18),
+  email: StringType()
+    .isRequired()
+    .isEmail(),
+  name: StringType().isRequired()
 });
-
-let validation = await schema.check(
-  new User({
-    name: 'Kid',
-    age: 9,
-    email: 'I do not have email yet'
-  })
-);
-
-expect(validation.isValid).toBeFalsy();
-expect(validation.hasError).toBeFalsy(); // the errors are at property level
-
-expect(validation.properties.age.hasError).toBeTruthy();
-
-const [ageError] = validation.properties.age.errors;
-
-console.log(ageError.i18n); // ERRORS.NUMBER.MIN
-console.log(ageError.key); // age
-
-expect(validation.properties.email.hasError).toBeTruthy();
-
-const [emailError] = validation.properties.email.errors;
-
-console.log(emailError.i18n); // ERRORS.STRING.IS_EMAIL
-console.log(emailError.key); // email
 ```
 
-## Nested object.
-
-Example of a nested object validation.
+Then we can create a GroupControl for this validation schema.
 
 ```typescript
-class Profile {
-  age: number;
-  weight?: number;
-  height: number;
+const fg = new FormGroup(schema);
 
-  constructor(data?: Partial<Profile>) {
-    Object.assign(this, data);
-  }
-}
-class User {
-  name: string;
-  email: string;
+expect(fg.properties.age).toBeDefined();
+expect(fg.properties.email).toBeDefined();
+expect(fg.properties.name).toBeDefined();
+```
 
-  profile: Profile;
+::: info Note
+The `FormGroup` object will create `FormControl` object for each property.
+:::
 
-  constructor(data?: Partial<User>) {
-    Object.assign(this, data);
-    const { profile = null } = data || {};
-    this.profile = new Profile(profile);
-  }
-}
+### Single Control (Bottom up validation)
 
+The following code, show how the `validate` method works.
+
+Validate will validate from bottom to top.
+So it will execute all validation rules for the age property:
+
+- isRequired()
+- max(10)
+
+And then it goes up and execute all rules defined for the ObjectType. Is this case it's none.
+
+```typescript
+fg.setData({
+  age: 10,
+  email: null,
+  name: null
+});
+
+await fg.properties.age.validate();
+
+expect(fg.properties.age.isValid).toBeFalsy();
+expect(fg.properties.email.isValid).toBeTruthy();
+expect(fg.properties.name.isValid).toBeTruthy();
+expect(fg.isValid).toBeFalsy();
+```
+
+### Validate All (Top to Bottom)
+
+`validateAll` method will validate all rules defined at object level and will drill down the properties.
+
+Everything will be validated.
+
+```typescript
+fg.setData({
+  age: 10,
+  email: null,
+  name: null
+});
+
+await fg.validateAll();
+
+expect(fg.properties.age.isValid).toBeFalsy();
+const [ageError] = fg.properties.age.errors;
+console.log(ageError);
+
+// {
+//   key: 'age',
+//   i18n: 'ERRORS.NUMBER.MIN',
+//   constraints: { min: 18 },
+//   value: 10
+// }
+
+expect(fg.properties.email.isValid).toBeFalsy();
+const [emailError] = fg.properties.email.errors;
+console.log(emailError);
+
+// {
+//   key: 'email',
+//   i18n: 'ERRORS.IS_REQUIRED',
+//   constraints: null,
+//   value: null
+// }
+
+expect(fg.properties.name.isValid).toBeFalsy();
+const [nameError] = fg.properties.email.errors;
+console.log(nameError);
+
+// {
+//   key: 'email',
+//   i18n: 'ERRORS.IS_REQUIRED',
+//   constraints: null,
+//   value: null
+// }
+
+expect(fg.errors.length).toBe(0);
+expect(fg.isValid).toBeFalsy();
+```
+
+## Change state
+
+The following code show that changing the state for a nested control it will propagate to the top.
+
+```typescript
 const schema = ObjectType<User>({
+  age: NumberType()
+    .isRequired()
+    .min(18),
+  email: StringType()
+    .isRequired()
+    .isEmail(),
+  name: StringType().isRequired()
+});
+
+const fg = new FormGroup(schema);
+
+fg.properties.age.setDirty();
+
+expect(fg.properties.age.isDirty).toBeTruthy(); // age is dirty
+expect(fg.properties.name.isDirty).toBeFalsy(); // name is not dirty
+expect(fg.properties.email.isDirty).toBeFalsy(); // email is dirty
+
+expect(fg.isDirty).toBeTruthy(); // fg is dirty.
+```
+
+## Nested FormGroups
+
+Form object model is based on schema validation objects. Schema validation object can describe any type of JSON object.
+
+So to have nested `FormGroup`s we simple need to define a schema with nested objects.
+
+The code bellow show the definition of a schema that describes a nested object.
+
+```typescript
+const schema = ObjectType({
+  age: NumberType()
+    .isRequired()
+    .min(18),
   name: StringType().isRequired(),
-  email: StringType().isEmail(),
-  profile: ObjectType<Profile>({
-    age: NumberType()
-      .min(18)
-      .isRequired(),
-    height: NumberType(),
-    weight: NumberType()
+  contact: ObjectType({
+    email: StringType()
       .isRequired()
-      .max(120)
-  }).isRequired()
-});
-
-let validation = await schema.check(
-  new User({
-    name: 'Sublime',
-    email: 'schema@websublime.com',
-    profile: {
-      age: 22,
-      height: 175,
-      weight: 75
-    }
+      .isEmail('CUSTOM.MESSAGE'),
+    phone: StringType().isRequired()
   })
-);
-
-expect(validation.isValid).toBeTruthy();
-expect(validation.hasError).toBeFalsy(); // the errors are at property level
+});
 ```
 
-Let's see the validation object in case of an error.
+Then we only need to pass the schema to the FormGroup object.
 
 ```typescript
-// ...
-validation = await schema.check(
-  new User({
-    email: 'schema@websublime.com',
-    profile: {
-      age: 22,
-      height: 175,
-      weight: 125
-    }
-  })
-);
+const fg = new FormGroup(schema);
 
-console.log(JSON.stringify(validation, null, 4));
+fg.setData({
+  age: 10,
+  name: 'test',
+  contact: {
+    email: 'teste',
+    phone: '222444222'
+  }
+});
 ```
 
-JSON ouput of the validation object:
+The code below show how we can access the `FormGroup` for nested object `contact`.
 
-```JSON
-{
-  "errors": [],
-  "hasError": false,
-  "isValid": false,
-  "properties": {
-    "name": {
-      "errors": [
-        {
-          "key": "name",  // key in the context of the object
-          "constraints": null,
-          "value": null,
-          "i18n": "ERRORS.IS_REQUIRED"
-        }
-      ],
-      "hasError": true,
-      "isValid": false
-    },
-    "email": {
-      "errors": [],
-      "hasError": false,
-      "isValid": true
-    },
-    "profile": {
-      "errors": [],
-      "hasError": false, // Object Profile don't hold errors.
-      "isValid": false, // Object Profile not valid.
-      "properties": {
-        "age": {
-          "errors": [],
-          "hasError": false,
-          "isValid": true
-        },
-        "height": {
-          "errors": [],
-          "hasError": false,
-          "isValid": true
-        },
-        "weight": {
-          "errors": [
-            {
-              "key": "weight",
-              "constraints": {
-                "max": 120  // Error model have a constraint
-              },            // object showing the validation contraint.
-              "value": 125,
-              "i18n": "ERRORS.NUMBER.MAX"
-            }
-          ],
-          "hasError": true,
-          "isValid": false
-        }
-      }
-    }
+It show that when we validate `emailFormControl` the validation is propagated to the top.
+
+**Note** the propagation is bottom up. Sibbling controls will not be affected.
+
+```typescript
+const fgContact = fg.properties.contact; // access the FormGroup for nested object contact
+
+expect(fgContact instanceof FormGroup).toBeTruthy();
+
+const emailFormControl = fgContact.properties.email;
+const phoneFormControl = fgContact.properties.phone;
+
+await emailFormControl.validate(); // validate email control. It will propagate the validation to the top.
+
+expect(emailFormControl.isValid).toBeFalsy();
+expect(phoneFormControl.isValid).toBeTruthy(); // is still valid.
+expect(fgContact.isValid).toBeFalsy();
+expect(fg.properties.name.isValid).toBeTruthy(); // is still valid
+expect(fg.isValid).toBeFalsy();
+
+expect(fg.hasErrors).toBeFalsy();
+expect(emailFormControl.hasErrors).toBeTruthy();
+expect(emailFormControl.errors[0].i18n).toBe('CUSTOM.MESSAGE'); // custom message defined on the schema
+```
+
+Code below show how to validate all the form, including nested `FormGroup`s (Top to Bottom)
+
+```typescript
+fg.setData({
+  age: 19,
+  name: 'test',
+  contact: {
+    email: 'huzgo1@gmail.com',
+    phone: '222444222'
   }
-}
+});
+
+await fg.validateAll();
+
+expect(fg.isValid).toBeTruthy();
+expect(fgContact.isValid).toBeTruthy();
+expect(emailFormControl.isValid).toBeTruthy();
+expect(fg.hasErrors).toBeFalsy();
 ```
