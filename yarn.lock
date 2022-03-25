@@ -1156,9 +1156,6 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-<<<<<<< HEAD
-"@websublime/schema@^1.1.0":
-=======
 "@vitejs/plugin-vue@^2.2.0":
   version "2.2.4"
   resolved "https://registry.npmjs.org/@vitejs/plugin-vue/-/plugin-vue-2.2.4.tgz#ab8b199ca82496b05d2654c5f34ffcf9b947243d"
@@ -1255,7 +1252,6 @@
   integrity sha512-ymN2pj6zEjiKJZbrf98UM2pfDd6F2H7ksKw7NDt/ZZ1fh5Ei39X5tABugtT03ZRlWd9imccoK0hE8hpjpU7irQ==
 
 "@websublime/schema@^1.0.2":
->>>>>>> 2fce4ee (feat: docs)
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@websublime/schema/-/schema-1.1.0.tgz#96534550fd0b39a6d6b73ed454f8510975cf62c1"
   integrity sha512-7F/A4max0gborNe/jd0N8mIYcOGEyn537R/CSNIh0XAbIIEhjzqEMKdQQguClcXi/YEuWCUIY3xrZxU9jR4+/Q==
