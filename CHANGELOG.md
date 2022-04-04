@@ -1,5 +1,11 @@
 # @websublime/forms
 
+## 0.0.3
+
+### Patch Changes
+
+- [#3](https://github.com/websublime/forms/pull/3) [`ac85b31`](https://github.com/websublime/forms/commit/ac85b31409e1262f1cfc2cac14edda6e307015df) Thanks [@Hulago](https://github.com/Hulago)! - Github page documentation
+
 ## 0.0.1
 
 ### Patch Changes
