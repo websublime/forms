@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
+  base: '/forms/',
   title: 'WebSublime Forms',
   description: 'Form model validation',
   themeConfig: {
@@ -12,8 +13,6 @@ export default defineConfig({
     sidebar: {
       '/guide/': getGuideSidebar(),
       '/api/': getApiSidebar()
-      // '/concepts/': getConceptsSidebar(),
-      // '/': getGuideSidebar()
     }
   }
 });
@@ -41,32 +40,3 @@ function getGuideSidebar() {
     }
   ];
 }
-
-// function getConceptsSidebar() {
-//   return [
-//     {
-//       text: 'Introduction',
-//       children: [
-//         { text: 'What is VitePress?', link: '/' },
-//         { text: 'Getting Started', link: '/guide/getting-started' },
-//         { text: 'Configuration', link: '/guide/configuration' },
-//         { text: 'Asset Handling', link: '/guide/assets' },
-//         { text: 'Markdown Extensions', link: '/guide/markdown' },
-//         { text: 'Using Vue in Markdown', link: '/guide/using-vue' },
-//         { text: 'Deploying', link: '/guide/deploy' }
-//       ]
-//     },
-//     {
-//       text: 'Advanced',
-//       children: [
-//         { text: 'Frontmatter', link: '/guide/frontmatter' },
-//         { text: 'Theming', link: '/guide/theming' },
-//         { text: 'API Reference', link: '/guide/api' },
-//         {
-//           text: 'Differences from Vuepress',
-//           link: '/guide/differences-from-vuepress'
-//         }
-//       ]
-//     }
-//   ];
-// }
