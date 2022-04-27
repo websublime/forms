@@ -1,124 +1,93 @@
-// import { Component, Prop, Vue } from 'vue-property-decorator';
+export const FormControlComponent = {
+  computed: {
+    errors(): string[] {
+      const { errors = [] } = (this as any).formControl || {};
+      return errors.map((error: any) =>
+        (this as any).$t(error.i18n, {
+          constraint: error.constraints,
+          value: error.value
+        })
+      );
+    }
+  },
+  methods: {
+    blur(event: any) {
+      if ((this as any).formControl) {
+        // eslint-disable-next-line id-match
+        (this as any).formControl.isFocus = false;
 
-// /**
-//  * FormControl
-//  *
-//  * Component providers to use on field forms controls
-//  *
-//  * @example
-//  * ```html
-//  * <form-control :form-control="fg.name" >
-//  *  <input v-model="model.name" #default={ on , errors} :errors="errors" v-on="on" />
-//  * </form-control>
-//  * ```
-//  */
-// @Component({
-//   name: 'FormControl'
-// })
-// export default class FormControlComponent extends Vue {
-//   /**
-//    * FormControl bind.
-//    */
-//   @Prop({
-//     default: () => null,
-//     type: Object
-//   })
-//   formControl!: FormControl;
+        if (!(this as any).formControl.isTouch) {
+          // eslint-disable-next-line id-match
+          (this as any).formControl.isTouch = true;
+        }
 
-//   /**
-//    * Component properties
-//    */
-//   get errors() {
-//     return this.formControl.errors.map((error) =>
-//       this.$t(error.i18n, {
-//         constraint: error.constraints,
-//         value: error.value
-//       })
-//     );
-//   }
+        (this as any).formControl.validate();
+        (this as any).formControl.notifyParent();
+      }
 
-//   /**
-//    * Handle focus event
-//    *
-//    * @param event focus event object
-//    */
-//   input(event: any) {
-//     if (this.formControl) {
-//       this.formControl.setData(event);
-//       this.formControl.validate();
-//     }
+      (this as any).$emit('blur', event);
+    },
+    focus(event: any) {
+      if ((this as any).formControl) {
+        // eslint-disable-next-line id-match
+        (this as any).formControl.isFocus = true;
 
-//     if (!this.formControl.isDirty) {
-//       // eslint-disable-next-line id-match
-//       this.formControl.isDirty = true;
-//     }
+        if (!(this as any).formControl.isTouch) {
+          // eslint-disable-next-line id-match
+          (this as any).formControl.isTouch = true;
+        }
 
-//     this.formControl.notifyParent();
+        (this as any).formControl.notifyParent();
+      }
 
-//     this.$emit('input', event);
-//   }
+      (this as any).$emit('focus', event);
+    },
+    input(event: any) {
+      if ((this as any).formControl) {
+        (this as any).formControl.setData(event);
+        (this as any).formControl.validate();
+      }
 
-//   /**
-//    * Handle focus event
-//    *
-//    * @param event focus event object
-//    */
-//   focus(event: any) {
-//     if (this.formControl) {
-//       // eslint-disable-next-line id-match
-//       this.formControl.isFocus = true;
+      if (!(this as any).formControl.isDirty) {
+        // eslint-disable-next-line id-match
+        (this as any).formControl.isDirty = true;
+      }
 
-//       if (!this.formControl.isTouch) {
-//         // eslint-disable-next-line id-match
-//         this.formControl.isTouch = true;
-//       }
+      (this as any).formControl.notifyParent();
 
-//       this.formControl.notifyParent();
-//     }
+      (this as any).$emit('input', event);
+    }
+  },
+  name: 'FormControl',
+  props: {
+    formControl: {
+      default: () => null,
+      type: Object
+    },
+    modelEvent: {
+      default: 'input',
+      type: String
+    }
+  },
 
-//     this.$emit('focus', event);
-//   }
+  render(): any {
+    const slot = (this as any).$scopedSlots.default({
+      errors: (this as any).errors,
+      hasErrors: (this as any).formControl.hasErrors,
+      isDirty: (this as any).formControl.isDirty,
+      isFocus: (this as any).formControl.isFocus,
+      isLoading: (this as any).formControl.isLoading,
+      isPrestine: (this as any).formControl.isPrestine,
+      isTouch: (this as any).formControl.isTouch,
+      isValid: (this as any).formControl.isValid,
+      on: {
+        ...(this as any).$listeners,
+        blur: (this as any).blur,
+        focus: (this as any).focus,
+        [(this as any).modelEvent]: (this as any).input
+      }
+    });
 
-//   /**
-//    * Handle blur event
-//    *
-//    * @param event blur event
-//    */
-//   blur(event: any) {
-//     if (this.formControl) {
-//       // eslint-disable-next-line id-match
-//       this.formControl.isFocus = false;
-
-//       if (!this.formControl.isTouch) {
-//         // eslint-disable-next-line id-match
-//         this.formControl.isTouch = true;
-//       }
-
-//       this.formControl.validate();
-//       this.formControl.notifyParent();
-//     }
-
-//     this.$emit('blur', event);
-//   }
-
-//   render() {
-//     const slot = this.$scopedSlots.default({
-//       errors: this.errors,
-//       hasErrors: this.formControl.hasErrors,
-//       isDirty: this.formControl.isDirty,
-//       isFocus: this.formControl.isFocus,
-//       isLoading: this.formControl.isLoading,
-//       isPrestine: this.formControl.isPrestine,
-//       isTouch: this.formControl.isTouch,
-//       isValid: this.formControl.isValid,
-//       on: {
-//         ...this.$listeners,
-//         blur: this.blur,
-//         focus: this.focus,
-//         input: this.input
-//       }
-//     });
-
-//     return Array.isArray(slot) ? slot[0] : slot;
-//   }
-// }
+    return Array.isArray(slot) ? slot[0] : slot;
+  }
+};

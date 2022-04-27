@@ -1251,10 +1251,12 @@
   resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.2.31.tgz#c90de7126d833dcd3a4c7534d534be2fb41faa4e"
   integrity sha512-ymN2pj6zEjiKJZbrf98UM2pfDd6F2H7ksKw7NDt/ZZ1fh5Ei39X5tABugtT03ZRlWd9imccoK0hE8hpjpU7irQ==
 
-"@websublime/schema@^1.0.2":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@websublime/schema/-/schema-1.1.0.tgz#96534550fd0b39a6d6b73ed454f8510975cf62c1"
-  integrity sha512-7F/A4max0gborNe/jd0N8mIYcOGEyn537R/CSNIh0XAbIIEhjzqEMKdQQguClcXi/YEuWCUIY3xrZxU9jR4+/Q==
+"@websublime/schema@^1.1.0":
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/@websublime/schema/-/schema-1.2.1.tgz#42d027feda7339ca5f56ac1080435624f0f7c1bc"
+  integrity sha512-ELBALPSc/aZMY8PD9tNGSd1isBsBd6uvYCueg9mtMLdCqebeSoTjTl0t0oNCxybS6///U7Dtro85X/ak3yL0vA==
+  dependencies:
+    vitepress "^0.22.3"
 
 abab@^2.0.3, abab@^2.0.5:
   version "2.0.5"
